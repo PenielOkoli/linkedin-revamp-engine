@@ -2,10 +2,23 @@
 
 import { useState, FormEvent } from 'react';
 
+type RevampResult = {
+  brand_pillars: string[];
+  positioning_statement: string;
+  headlines: string[];
+  about_section: string;
+  experience: {
+    job_title: string;
+    company: string;
+    bullets: string[];
+  }[];
+};
+
 export default function IntakeForm() {
   const [isStudent, setIsStudent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
+  const [revampResult, setRevampResult] = useState<RevampResult | null>(null);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -15,14 +28,16 @@ export default function IntakeForm() {
     const formData = new FormData(e.currentTarget);
 
     try {
-      // Sends multipart/form-data directly to n8n webhook for binary file processing
       const response = await fetch('https://myselfhostedn8n.duckdns.org/webhook-test/intake', {
         method: 'POST',
         body: formData,
       });
 
       if (response.ok) {
-        setStatusMessage('Intake submitted successfully. Our engine is processing your assets.');
+        const data = await response.json();
+        // Extract the payload based on n8n's array output structure
+        const finalOutput = Array.isArray(data) && data[0]?.output ? data[0].output : data;
+        setRevampResult(finalOutput);
       } else {
         setStatusMessage('Error submitting form. Please try again.');
       }
@@ -34,16 +49,94 @@ export default function IntakeForm() {
     }
   }
 
+  // PHASE 6: CLIENT REVIEW DASHBOARD
+  if (revampResult) {
+    return (
+      <main className="min-h-screen bg-gray-950 text-gray-100 p-8 md:p-16 selection:bg-blue-600">
+        <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <header className="border-b border-gray-800 pb-8 flex justify-between items-end">
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight mb-2 text-white">Profile Revamp Ready</h1>
+              <p className="text-gray-400">Review your AI-generated brand positioning and profile copy below.</p>
+            </div>
+            <button 
+              onClick={() => setRevampResult(null)} 
+              className="text-sm bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-md transition"
+            >
+              Start New Intake
+            </button>
+          </header>
+
+          <section className="space-y-6">
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+              <h2 className="text-sm font-semibold tracking-wider text-blue-500 uppercase mb-4">Brand Pillars</h2>
+              <div className="flex flex-wrap gap-3">
+                {revampResult.brand_pillars.map((pillar, i) => (
+                  <span key={i} className="bg-blue-900/30 text-blue-300 border border-blue-800/50 px-3 py-1 rounded-full text-sm font-medium">
+                    {pillar}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+              <h2 className="text-sm font-semibold tracking-wider text-blue-500 uppercase mb-4">Positioning Statement</h2>
+              <p className="text-lg text-gray-200 leading-relaxed italic border-l-4 border-blue-600 pl-4">
+                "{revampResult.positioning_statement}"
+              </p>
+            </div>
+
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+              <h2 className="text-sm font-semibold tracking-wider text-blue-500 uppercase mb-4">Headline Options</h2>
+              <ul className="space-y-3">
+                {revampResult.headlines.map((headline, i) => (
+                  <li key={i} className="flex items-start gap-3 p-3 bg-gray-950 rounded border border-gray-800">
+                    <span className="text-gray-600 font-mono mt-0.5">0{i + 1}</span>
+                    <p className="text-gray-200 font-medium">{headline}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+              <h2 className="text-sm font-semibold tracking-wider text-blue-500 uppercase mb-4">About Section</h2>
+              <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">
+                {revampResult.about_section}
+              </p>
+            </div>
+
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+              <h2 className="text-sm font-semibold tracking-wider text-blue-500 uppercase mb-4">Experience Rewrite</h2>
+              <div className="space-y-6">
+                {revampResult.experience.map((exp, i) => (
+                  <div key={i} className="border-b border-gray-800 pb-6 last:border-0 last:pb-0">
+                    <h3 className="text-xl font-semibold text-white">{exp.job_title}</h3>
+                    <p className="text-gray-400 mb-4">{exp.company}</p>
+                    <ul className="list-disc list-outside ml-5 space-y-2 text-gray-300">
+                      {exp.bullets.map((bullet, j) => (
+                        <li key={j} className="leading-relaxed">{bullet}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    );
+  }
+
+  // PHASE 1: INTAKE FORM (Existing)
   return (
     <main className="min-h-screen bg-gray-950 text-gray-100 p-8 md:p-16 selection:bg-blue-600">
       <div className="max-w-3xl mx-auto">
         <header className="mb-12 border-b border-gray-800 pb-8">
-          <h1 className="text-4xl font-bold tracking-tight mb-2">LinkedIn Revamp Intake</h1>
+          <h1 className="text-4xl font-bold tracking-tight mb-2 text-white">LinkedIn Revamp Intake</h1>
           <p className="text-gray-400">Complete all required fields below to initiate your profile optimization.</p>
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Base Information */}
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-white">Target Positioning</h2>
             
@@ -75,7 +168,6 @@ export default function IntakeForm() {
 
           <hr className="border-gray-800" />
 
-          {/* Verification & Assets */}
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-white">Verification & Assets</h2>
             
@@ -117,7 +209,7 @@ export default function IntakeForm() {
             disabled={isSubmitting}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? 'Uploading Assets & Submitting...' : 'Submit to Engine'}
+            {isSubmitting ? 'Processing Engine Pipeline...' : 'Submit to Engine'}
           </button>
           
           {statusMessage && (
