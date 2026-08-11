@@ -13,20 +13,16 @@ export default function IntakeForm() {
     setStatusMessage('');
 
     const formData = new FormData(e.currentTarget);
-    const payload = Object.fromEntries(formData.entries());
 
     try {
-      // This webhook URL will be replaced with your live n8n production webhook
+      // Sends multipart/form-data directly to n8n webhook for binary file processing
       const response = await fetch('https://your-n8n-domain.com/webhook/intake', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
+        body: formData,
       });
 
       if (response.ok) {
-        setStatusMessage('Intake submitted successfully. Our engine is processing your profile.');
+        setStatusMessage('Intake submitted successfully. Our engine is processing your assets.');
       } else {
         setStatusMessage('Error submitting form. Please try again.');
       }
@@ -84,9 +80,9 @@ export default function IntakeForm() {
             <h2 className="text-xl font-semibold text-white">Verification & Assets</h2>
             
             <div className="space-y-2">
-              <label htmlFor="paymentProof" className="text-sm text-gray-300">Proof of Payment Link / Ref *</label>
-              <input required type="text" id="paymentProof" name="paymentProof" placeholder="Transaction ID or receipt link" 
-                className="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
+              <label htmlFor="paymentProof" className="text-sm text-gray-300">Proof of Payment File *</label>
+              <input required type="file" id="paymentProof" name="paymentProof" accept="image/*,.pdf" 
+                className="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:ring-2 focus:ring-blue-500 outline-none transition cursor-pointer" />
             </div>
 
             <div className="flex items-center space-x-3 my-4">
@@ -97,22 +93,22 @@ export default function IntakeForm() {
 
             {isStudent && (
               <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                <label htmlFor="studentId" className="text-sm text-gray-300">Student ID Link *</label>
-                <input required={isStudent} type="text" id="studentId" name="studentId" placeholder="Link to student ID verification" 
-                  className="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
+                <label htmlFor="studentId" className="text-sm text-gray-300">Student ID Upload *</label>
+                <input required={isStudent} type="file" id="studentId" name="studentId" accept="image/*,.pdf" 
+                  className="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:ring-2 focus:ring-blue-500 outline-none transition cursor-pointer" />
               </div>
             )}
 
             <div className="space-y-2">
-              <label htmlFor="cvContent" className="text-sm text-gray-300">Current CV / Resume Text (or Link) *</label>
-              <textarea required id="cvContent" name="cvContent" rows={5} placeholder="Paste your current CV text or provide a Google Drive link..." 
-                className="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
+              <label htmlFor="cvFile" className="text-sm text-gray-300">Upload CV / Resume (PDF/Word) *</label>
+              <input required type="file" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx" 
+                className="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:ring-2 focus:ring-blue-500 outline-none transition cursor-pointer" />
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="certificates" className="text-sm text-gray-300">Certificates & Work Samples Links</label>
-              <textarea id="certificates" name="certificates" rows={2} placeholder="Links to valid certificates or portfolio..." 
-                className="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
+              <label htmlFor="certificates" className="text-sm text-gray-300">Certificates & Work Samples Files</label>
+              <input type="file" id="certificates" name="certificates" multiple accept="image/*,.pdf,.doc,.docx" 
+                className="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:ring-2 focus:ring-blue-500 outline-none transition cursor-pointer" />
             </div>
           </section>
 
@@ -121,7 +117,7 @@ export default function IntakeForm() {
             disabled={isSubmitting}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? 'Validating Payload...' : 'Submit to Engine'}
+            {isSubmitting ? 'Uploading Assets & Submitting...' : 'Submit to Engine'}
           </button>
           
           {statusMessage && (
