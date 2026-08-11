@@ -16,7 +16,7 @@ export default function IntakeForm() {
 
     try {
       // Sends multipart/form-data directly to n8n webhook for binary file processing
-      const response = await fetch('https://your-n8n-domain.com/webhook/intake', {
+      const response = await fetch('https://myselfhostedn8n.duckdns.org/webhook-test/intake', {
         method: 'POST',
         body: formData,
       });
