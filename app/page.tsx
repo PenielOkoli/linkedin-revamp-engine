@@ -28,7 +28,7 @@ export default function IntakeForm() {
     const formData = new FormData(e.currentTarget);
 
     try {
-      const response = await fetch('https://myselfhostedn8n.duckdns.org/webhook-test/intake', {
+      const response = await fetch('https://myselfhostedn8n.duckdns.org/webhook/intake', {
         method: 'POST',
         body: formData,
       });
