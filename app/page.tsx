@@ -37,7 +37,8 @@ export default function IntakeForm() {
 
       if (response.ok) {
         const data = await response.json();
-        const finalOutput = Array.isArray(data) && data[0]?.output ? data[0].output : data;
+        // Check if n8n nested the result inside an 'output' key
+        const finalOutput = data.output ? data.output : data;
         setRevampResult(finalOutput);
       } else {
         setStatusMessage('Error submitting form. Please try again.');
