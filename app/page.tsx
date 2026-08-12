@@ -3,11 +3,11 @@
 import { useState, FormEvent } from 'react';
 
 type RevampResult = {
-  brand_pillars: string[];
-  positioning_statement: string;
-  headlines: string[];
-  about_section: string;
-  experience: {
+  brand_pillars?: string[];
+  positioning_statement?: string;
+  headlines?: string[];
+  about_section?: string;
+  experience?: {
     job_title: string;
     company: string;
     bullets: string[];
@@ -79,7 +79,7 @@ export default function IntakeForm() {
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
               <h2 className="text-sm font-semibold tracking-wider text-blue-500 uppercase mb-4">Brand Pillars</h2>
               <div className="flex flex-wrap gap-3">
-                {revampResult.brand_pillars.map((pillar, i) => (
+                {(revampResult.brand_pillars || []).map((pillar, i) => (
                   <span key={i} className="bg-blue-900/30 text-blue-300 border border-blue-800/50 px-3 py-1 rounded-full text-sm font-medium">
                     {pillar}
                   </span>
@@ -90,14 +90,14 @@ export default function IntakeForm() {
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
               <h2 className="text-sm font-semibold tracking-wider text-blue-500 uppercase mb-4">Positioning Statement</h2>
               <p className="text-lg text-gray-200 leading-relaxed italic border-l-4 border-blue-600 pl-4">
-                "{revampResult.positioning_statement}"
+                "{revampResult.positioning_statement || 'Positioning statement generating...'}"
               </p>
             </div>
 
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
               <h2 className="text-sm font-semibold tracking-wider text-blue-500 uppercase mb-4">Headline Options</h2>
               <ul className="space-y-3">
-                {revampResult.headlines.map((headline, i) => (
+                {(revampResult.headlines || []).map((headline, i) => (
                   <li key={i} className="flex items-start gap-3 p-3 bg-gray-950 rounded border border-gray-800">
                     <span className="text-gray-600 font-mono mt-0.5">0{i + 1}</span>
                     <p className="text-gray-200 font-medium">{headline}</p>
@@ -109,19 +109,19 @@ export default function IntakeForm() {
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
               <h2 className="text-sm font-semibold tracking-wider text-blue-500 uppercase mb-4">About Section</h2>
               <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">
-                {revampResult.about_section}
+                {revampResult.about_section || 'About section generating...'}
               </p>
             </div>
 
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
               <h2 className="text-sm font-semibold tracking-wider text-blue-500 uppercase mb-4">Experience Rewrite</h2>
               <div className="space-y-6">
-                {revampResult.experience.map((exp, i) => (
+                {(revampResult.experience || []).map((exp, i) => (
                   <div key={i} className="border-b border-gray-800 pb-6 last:border-0 last:pb-0">
                     <h3 className="text-xl font-semibold text-white">{exp.job_title}</h3>
                     <p className="text-gray-400 mb-4">{exp.company}</p>
                     <ul className="list-disc list-outside ml-5 space-y-2 text-gray-300">
-                      {exp.bullets.map((bullet, j) => (
+                      {(exp.bullets || []).map((bullet, j) => (
                         <li key={j} className="leading-relaxed">{bullet}</li>
                       ))}
                     </ul>
@@ -130,7 +130,6 @@ export default function IntakeForm() {
               </div>
             </div>
 
-            {/* PHASE 7: LAUNCH SUPPORT POST */}
             {revampResult.launch_post && (
               <div className="bg-gradient-to-br from-blue-950/40 to-gray-900 border border-blue-800/40 rounded-lg p-6">
                 <div className="flex justify-between items-center mb-4">
@@ -217,7 +216,7 @@ export default function IntakeForm() {
             )}
 
             <div className="space-y-2">
-              <label htmlFor="cvFile" className="text-sm text-gray-300">Upload CV / Resume (Strictly PDF) *</label>
+              <label htmlFor="cvFile" className="text-sm text-gray-300">Upload CV / Resume (PDF Only) *</label>
               <input required type="file" id="cvFile" name="cvFile" accept=".pdf" 
                 className="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:ring-2 focus:ring-blue-500 outline-none transition cursor-pointer" />
             </div>
