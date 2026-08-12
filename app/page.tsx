@@ -12,6 +12,7 @@ type RevampResult = {
     company: string;
     bullets: string[];
   }[];
+  launch_post?: string;
 };
 
 export default function IntakeForm() {
@@ -19,6 +20,7 @@ export default function IntakeForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [revampResult, setRevampResult] = useState<RevampResult | null>(null);
+  const [copied, setCopied] = useState(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -35,7 +37,6 @@ export default function IntakeForm() {
 
       if (response.ok) {
         const data = await response.json();
-        // Extract the payload based on n8n's array output structure
         const finalOutput = Array.isArray(data) && data[0]?.output ? data[0].output : data;
         setRevampResult(finalOutput);
       } else {
@@ -49,7 +50,14 @@ export default function IntakeForm() {
     }
   }
 
-  // PHASE 6: CLIENT REVIEW DASHBOARD
+  const handleCopyPost = () => {
+    if (revampResult?.launch_post) {
+      navigator.clipboard.writeText(revampResult.launch_post);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   if (revampResult) {
     return (
       <main className="min-h-screen bg-gray-950 text-gray-100 p-8 md:p-16 selection:bg-blue-600">
@@ -57,7 +65,7 @@ export default function IntakeForm() {
           <header className="border-b border-gray-800 pb-8 flex justify-between items-end">
             <div>
               <h1 className="text-4xl font-bold tracking-tight mb-2 text-white">Profile Revamp Ready</h1>
-              <p className="text-gray-400">Review your AI-generated brand positioning and profile copy below.</p>
+              <p className="text-gray-400">Review your AI-generated brand positioning, copy, and launch assets.</p>
             </div>
             <button 
               onClick={() => setRevampResult(null)} 
@@ -121,13 +129,30 @@ export default function IntakeForm() {
                 ))}
               </div>
             </div>
+
+            {/* PHASE 7: LAUNCH SUPPORT POST */}
+            {revampResult.launch_post && (
+              <div className="bg-gradient-to-br from-blue-950/40 to-gray-900 border border-blue-800/40 rounded-lg p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-sm font-semibold tracking-wider text-blue-400 uppercase">Phase 7: LinkedIn Launch Post</h2>
+                  <button
+                    onClick={handleCopyPost}
+                    className="text-xs bg-blue-600 hover:bg-blue-500 text-white font-medium px-3 py-1.5 rounded transition"
+                  >
+                    {copied ? 'Copied!' : 'Copy Post Text'}
+                  </button>
+                </div>
+                <p className="text-gray-200 whitespace-pre-wrap leading-relaxed bg-gray-950/60 p-4 rounded border border-gray-800 font-sans">
+                  {revampResult.launch_post}
+                </p>
+              </div>
+            )}
           </section>
         </div>
       </main>
     );
   }
 
-  // PHASE 1: INTAKE FORM (Existing)
   return (
     <main className="min-h-screen bg-gray-950 text-gray-100 p-8 md:p-16 selection:bg-blue-600">
       <div className="max-w-3xl mx-auto">
