@@ -217,8 +217,8 @@ export default function IntakeForm() {
             )}
 
             <div className="space-y-2">
-              <label htmlFor="cvFile" className="text-sm text-gray-300">Upload CV / Resume (PDF/Word) *</label>
-              <input required type="file" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx" 
+              <label htmlFor="cvFile" className="text-sm text-gray-300">Upload CV / Resume (Strictly PDF) *</label>
+              <input required type="file" id="cvFile" name="cvFile" accept=".pdf" 
                 className="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 focus:ring-2 focus:ring-blue-500 outline-none transition cursor-pointer" />
             </div>
 
